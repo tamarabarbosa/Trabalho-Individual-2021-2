@@ -1,31 +1,45 @@
 version: "3.7"
 services:
         db: 
-                image: tamarabarbosa/gece-postgres-db:latest
-                restart: always
+                image: tamarabarbosa/gces-db
+                command: systemctl reload postgresql
+                expose:
+                        - "5432"
                 ports:
                         - "5432:5432"
                 volumes:
-                        - ./appgces-db:/var/lib/postgresql/data
-        nginx:
-                build:
-                        context: ./
-                        dockerfile: ./Dockerfile.nginx
-                ports:
-                        - '8020:8020'
+                       - ./appgces-db:/data/postgres
+                restart: always
         app:
                 build:
                         context: ./
                         args:
                                 USER_ID: "${USER_ID:-1000}"
                                 GROUP_ID: "${GROUP_ID:-1000}"
+                command: bin/rails db:create
+                command: bin/rails db:migrate
+                command: bin/rails db:seed
+                command: thin start
                 container_name: gces-aplicacao
                 volumes:
-                        - ./appgces-aplicacao:/opt/app
+                        - ./appgces-aplicacao:/data/aplicacao
+                expose:
+                        - "3000"
                 ports:
                         - "3000:3000"
                 depends_on:
                         - db
-                        - nginx
+                links:
+                        - db
+        nginx:
+                build:
+                        context: .
+                        dockerfile: ./Dockerfile.nginx
+                depends_on:
+                        - app
+                links:
+                        - app
+                ports:
+                        - 80:80
 
 
