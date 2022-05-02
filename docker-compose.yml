@@ -1,10 +1,10 @@
 version: "3.7"
 services:
         db: 
-                image: tamarabarbosa/gces-postgres-db:latest
+                image: tamarabarbosa/gece-postgres-db:latest
                 restart: always
                 ports:
-                        - "5432:54321"
+                        - "5432:5432"
                 volumes:
                         - ./appgces-db:/var/lib/postgresql/data
         nginx:
