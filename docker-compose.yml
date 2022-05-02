@@ -7,6 +7,12 @@ services:
                         - "5432:54321"
                 volumes:
                         - ./appgces-db:/var/lib/postgresql/data
+        nginx:
+                build:
+                        context: ./
+                        dockerfile: ./Dockerfile.nginx
+                ports:
+                        - '8020:8020'
         app:
                 build:
                         context: ./
@@ -20,5 +26,6 @@ services:
                         - "3000:3000"
                 depends_on:
                         - db
+                        - nginx
 
 
