@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+        db: 
+                image: tamarabarbosa/gces-postgres-db:latest
+                restart: always
+                ports:
+                        - "5432:54321"
+                volumes:
+                        - ./appgces-db:/var/lib/postgresql/data
+        app:
+                build:
+                        context: ./
+                        args:
+                                USER_ID: "${USER_ID:-1000}"
+                                GROUP_ID: "${GROUP_ID:-1000}"
+                container_name: gces-aplicacao
+                volumes:
+                        - ./appgces-aplicacao:/opt/app
+                ports:
+                        - "3000:3000"
+                depends_on:
+                        - db
+
+
